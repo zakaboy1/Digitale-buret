@@ -123,29 +123,31 @@ if (ss2 == HIGH && C == 0) {
  lcd.clear();
  }
  //hoeveelheid vloeistof kiezen
-if (ss3 = HIGH && C == 1 && C2 == 0) {
- V = V + 0.001;
- lcd.write(V);
- C2++;
- }
-if (ss3 = HIGH && C == 1 && C2 == 1) {
- lcd.clear();
- V = V + 0.01;
- lcd.write(V);
- C2++;
- }
-if (ss3 = HIGH && C == 1 && C2 == 2) {
- lcd.clear();
- V = V + 0.1;
- lcd.write(V);
- C2++;
- }
-if (ss3 = HIGH && C == 1 && C2 == 3) {
- lcd.clear();
- V = V + 1;
- lcd.write(V);
- C2 = 0;
- }
+if (ss3 = HIGH && C == 1) {
+ switch (C2) {
+   case 0:
+     V = V + 0.001;
+     lcd.write(V);
+     C2++;
+     break;
+   case 1:
+     lcd.clear();
+     V = V + 0.01;
+     lcd.write(V);
+     C2++
+     break;
+   case 2:
+     lcd.clear();
+     V = V + 0.1;
+     lcd.write(V);
+     C2++;
+     break;
+   case 3:
+     lcd.clear();
+     V = V + 1;
+     lcd.write(V);
+     C2 = 0;
+ }}
 if (ss4 = HIGH && C == 1){
   //berekening
   C++;
