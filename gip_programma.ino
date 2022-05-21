@@ -14,7 +14,7 @@
 #define STEP 9
 DRV8825 stepper(MOTOR_STEPS, DIR, STEP, SLEEP, MODE0, MODE1, MODE2);
 stepper.setMicrostep(32); // microstepping op 1/32
-draaihoek = 0
+draaihoek = 0;
 
 //LCD Callibreren
 LiquidCrystal_I2C lcd(0x27, 20, 4);
@@ -71,7 +71,7 @@ int f = 0;   //darcy-wrijvingscoeficient
 int v = 0;   //snelheid
 
 //doel
-int n = 0;   //aantal toeren
+float n = 0;   //aantal toeren
 int t = 0;   //tijd
 
 void setup(){
@@ -170,7 +170,7 @@ void loop(){
  }
   if (ss4 = HIGH && C == 2 && V != 0) {
     //motor draait n aantal toeren
-    draaihoek = n * 360
+    draaihoek = n * 360;
     stepper.rotate(draaihoek);
     //timer
     lcd.clear();      //lcd word leeggemaakt
