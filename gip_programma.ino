@@ -2,6 +2,19 @@
 #include <SevSeg.h>
 #include <Wire.h>
 #include <LiquidCrystal_I2C.h>
+#include "DRV8825.h"
+#include <Arduino.h>
+
+// stappenmotor
+#define MODE0 10
+#define MODE1 11 
+#define MODE2 12
+#define MOTOR_STEPS 200
+#define DIR 8
+#define STEP 9
+DRV8825 stepper(MOTOR_STEPS, DIR, STEP, SLEEP, MODE0, MODE1, MODE2);
+stepper.setMicrostep(32); // microstepping op 1/32
+draaihoek = 0
 
 //LCD Callibreren
 LiquidCrystal_I2C lcd(0x27, 20, 4);
@@ -62,112 +75,117 @@ int n = 0;   //aantal toeren
 int t = 0;   //tijd
 
 void setup(){
-//lcd
-lcd.init();                 //initialitatie van het LCD
-lcd.backlight();            //zet het achtergrondlicht aan
-lcd.clear();                //wist het scherm
-lcd.setCursor(0, 0);        //zet de cursor op positie 1, regel 1
-//drukknoppen
-pinMode(dk1,INPUT);
-pinMode(dk2,INPUT);
-pinMode(dk3,INPUT);
-pinMode(dk4,INPUT);
+  //stappenmotor
+  stepper.enable();
+  
+  //lcd
+  lcd.init();                 //initialitatie van het LCD
+  lcd.backlight();            //zet het achtergrondlicht aan
+  lcd.clear();                //wist het scherm
+  lcd.setCursor(0, 0);        //zet de cursor op positie 1, regel 1
+  
+  //drukknoppen
+  pinMode(dk1,INPUT);
+  pinMode(dk2,INPUT);
+  pinMode(dk3,INPUT);
+  pinMode(dk4,INPUT);
 }
 void loop(){
+  //temperatuur
+  VRT = analogRead(A0);         //analoge waarde
+  VRT = (5.00/1023.00)*VRT;     //spanning in V
+  VR = VCC - VRT;
+  RT = VRT/(VR/R);
+  ln = log(RT/R0);
+  T = (1/((ln/TCR) + (1/T0)));
+  T = T - 273.15;               //T ==> °C
 
-//temperatuur
-VRT = analogRead(A0);         //analoge waarde
-VRT = (5.00/1023.00)*VRT;     //spanning in V
-VR = VCC - VRT;
-RT = VRT/(VR/R);
-ln = log(RT/R0);
-T = (1/((ln/TCR) + (1/T0)));
-T = T - 273.15;               //T ==> °C
+  //timer
+  lcd.print(t);     //t = tijd
+  t = t-1;          // waarde van t daalt met 1 
+  delay(950);       //delay van 0.95 seconden
+  lcd.clear();      //lcd word leeggemaakt
 
-//timer
-lcd.print(t);     //t = tijd
-t = t-1;          // waarde van t daalt met 1 
-delay(950);       //delay van 0.95 seconden
-lcd.clear();      //lcd word leeggemaakt
+  //keuze tussen water en olie
+  ss1 = digitalRead(dk1);
+  ss2 = digitalRead(dk2);
+  ss3 = digitalRead(dk3);
+  ss4 = digitalRead(dk4);
 
-//keuze tussen water en olie
-ss1 = digitalRead(dk1);
-ss2 = digitalRead(dk2);
-ss3 = digitalRead(dk3);
-ss4 = digitalRead(dk4);
-
-if (ss1 == LOW && ss2 == LOW && C == 0) {
-  lcd.clear();
-  lcd.write("kies een vloeistof");
-  lcd.setCursor(0,1);
-  lcd.write("1 = water 2 = olie");
-}
-if (ss1 == HIGH && C == 0) {
-  C++;
-  Vis = Vis1;
-  D = D1;
-  lcd.clear();
-  lcd.setCursor(0,0);
-  lcd.write("U koos water");
-  delay(2000);
-  lcd.clear();
- }
-if (ss2 == HIGH && C == 0) {
- C++;
- Vis = Vis2;
- D = D2;
- lcd.clear();
- lcd.setCursor(0,0);
- lcd.write("U koos olie");
- delay(2000);
- lcd.clear();
- }
- //hoeveelheid vloeistof kiezen
-if (ss3 = HIGH && C == 1) {
- switch (C2) {
-   case 0:
-     V = V + 0.001;
-     lcd.write(V);
-     C2++;
-     break;
-   case 1:
-     lcd.clear();
-     V = V + 0.01;
-     lcd.write(V);
-     C2++
-     break;
-   case 2:
-     lcd.clear();
-     V = V + 0.1;
-     lcd.write(V);
-     C2++;
-     break;
-   case 3:
-     lcd.clear();
-     V = V + 1;
-     lcd.write(V);
-     C2 = 0;
- }}
-if (ss4 = HIGH && C == 1){
-  //berekening
-  C++;
- }
-if (ss4 = HIGH && C == 2 && V != 0) {
- //timer
- //motor draait n aantal toeren
- lcd.clear();      //lcd word leeggemaakt
- lcd.print(t);     //t = tijd
- t = t-1;          // waarde van t daalt met 1 
- delay(950);       //delay van 0.95 seconden
-  if (t == 0 && C == 2) {
-    delay(1000);
+  if (ss1 == LOW && ss2 == LOW && C == 0) {
     lcd.clear();
-    lcd.write("Einde");
+    lcd.write("kies een vloeistof");
+    lcd.setCursor(0,1);
+    lcd.write("1 = water 2 = olie");
+}
+  if (ss1 == HIGH && C == 0) {
+    C++;
+    Vis = Vis1;
+    D = D1;
+    lcd.clear();
+    lcd.setCursor(0,0);
+    lcd.write("U koos water");
     delay(2000);
-    V = 0;
-    n = 0;
-    C = 0;
-    C2 = 0;
+    lcd.clear();
+ }
+  if (ss2 == HIGH && C == 0) {
+   C++;
+   Vis = Vis2;
+   D = D2;
+   lcd.clear();
+   lcd.setCursor(0,0);
+   lcd.write("U koos olie");
+   delay(2000);
+   lcd.clear();
+ }
+   //hoeveelheid vloeistof kiezen
+  if (ss3 = HIGH && C == 1) {
+   switch (C2) {
+     case 0:
+       V = V + 0.001;
+       lcd.write(V);
+       C2++;
+       break;
+     case 1:
+       lcd.clear();
+       V = V + 0.01;
+       lcd.write(V);
+       C2++
+       break;
+     case 2:
+       lcd.clear();
+       V = V + 0.1;
+       lcd.write(V);
+       C2++;
+       break;
+     case 3:
+       lcd.clear();
+       V = V + 1;
+       lcd.write(V);
+       C2 = 0;
+ }}
+  if (ss4 = HIGH && C == 1){
+    //berekening
+    C++;
+ }
+  if (ss4 = HIGH && C == 2 && V != 0) {
+    //motor draait n aantal toeren
+    draaihoek = n * 360
+    stepper.rotate(draaihoek);
+    //timer
+    lcd.clear();      //lcd word leeggemaakt
+    lcd.print(t);     //t = tijd
+    t = t-1;          // waarde van t daalt met 1 
+    delay(950);       //delay van 0.95 seconden
+    if (t == 0 && C == 2) {
+      delay(1000);
+      lcd.clear();
+      lcd.write("Einde");
+      delay(2000);
+      V = 0;
+      n = 0;
+      C = 0;
+      C2 = 0;
   }
  }
 }
