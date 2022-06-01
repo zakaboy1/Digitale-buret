@@ -4,6 +4,7 @@
 #include <LiquidCrystal_I2C.h>
 #include "DRV8825.h"
 #include <Arduino.h>
+#include <Math.h>
 
 // stappenmotor
 #define MODE0 10
@@ -12,12 +13,12 @@
 #define MOTOR_STEPS 200
 #define DIR 8
 #define STEP 9
-DRV8825 stepper(MOTOR_STEPS, DIR, STEP, SLEEP, MODE0, MODE1, MODE2);
+DRV8825 stepper(MOTOR_STEPS, DIR, STEP, MODE0, MODE1, MODE2);
 stepper.setMicrostep(32); // microstepping op 1/32
 int steps = 0;
 
 //LCD Callibreren
-LiquidCrystal_I2C lcd(0x27, 20, 4);
+LiquidCrystal_I2C lcd(0x27, 16, 2);
 
 //drukknoppen
   //dk1
@@ -53,26 +54,27 @@ int C2 = 0;
 int D1 = 997; //dichtheid water
 int D2 = 918; //dichtheid olie
 int Re = 0;   //Reinoldsgetal
-int ov = 0;   //opstartsnelheid motor
-int mv = 0;   //maximale snelheid motor
 int L = 1;    //lengte leiding
 int d = 2;    //diameter leiding
-float V = 0;        //gevraagde volume
+float V = 0;  //gevraagde volume
+float Q = 0.03;    //debiet
 
 //berekende waardes
 float Vis1 = float(1.541821619914)*pow(float(0.98017727834486),T);  //dynamische viscositeit water
 float Vis2 = float(2)*pow(float(1),T);                              //dynamische viscositeit olie
 float Vis = 0;
 int D = 0;   //dichteheid
+int P = 1013 //druk
 int Pw = 0;  //drukverlies door wrijving
 int Pt = 0;  //toegepaste druk (P-Pw)
 int N = 0;   //kinematische viscositeit
 int f = 0;   //darcy-wrijvingscoeficient
-int v = 0;   //snelheid
+float v = 0.3; //snelheid
+int Vt = 0;  //toegepaste volume
 
 //doel
 float n = 0;   //aantal omwentelingen
-int t = 0;   //tijd
+int t = 0;     //tijd
 
 void setup(){
   //stappenmotor
@@ -166,9 +168,24 @@ void loop(){
  }}
   if (ss4 = HIGH && C == 1){
     //berekening
+    Re = (v * L * D)/Vis;
+    if (Re < 2000){
+      f = 64/Re;
+      }
+    else {
+      Lcd.clear();
+      lcd.write("F error");
+      delay(2000);
+      lcd.clear();
+    }
+    Pw = f * D * (L/d) * (exp(v)/2);
+    Pt = P - Pw;
+    Vt = (Py*V)/(P);
+    Vt/Q = n;
+    Vt/v = t;
     C++;
  }
-  if (ss4 = HIGH && C == 2 && V != 0) {
+  if (ss4 = HIGH && C == 2 && Vt != 0 && V != 0) {
     //motor draait 'steps' aantal stappen
     int(steps) = n * 6400;
     stepper.move(steps);
@@ -183,6 +200,7 @@ void loop(){
       lcd.write("Einde");
       delay(2000);
       V = 0;
+      Vt = 0;
       n = 0;
       C = 0;
       C2 = 0;
