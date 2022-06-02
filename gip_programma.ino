@@ -1,4 +1,8 @@
 //bibliotheken
+#include <BasicStepperDriver.h>
+#include <DRV8825.h>
+#include <MultiDriver.h>
+#include <SyncDriver.h>
 #include <SevSeg.h>
 #include <Wire.h>
 #include <LiquidCrystal_I2C.h>
@@ -64,7 +68,7 @@ float Vis1 = float(1.541821619914)*pow(float(0.98017727834486),T);  //dynamische
 float Vis2 = float(2)*pow(float(1),T);                              //dynamische viscositeit olie
 float Vis = 0;
 int D = 0;   //dichteheid
-int P = 1013 //druk
+int P = 1013; //druk
 int Pw = 0;  //drukverlies door wrijving
 int Pt = 0;  //toegepaste druk (P-Pw)
 int N = 0;   //kinematische viscositeit
@@ -152,7 +156,7 @@ void loop(){
        lcd.clear();
        V = V + 0.01;
        lcd.write(V);
-       C2++
+       C2++;
        break;
      case 2:
        lcd.clear();
@@ -165,6 +169,7 @@ void loop(){
        V = V + 1;
        lcd.write(V);
        C2 = 0;
+       break;
  }}
   if (ss4 = HIGH && C == 1){
     //berekening
