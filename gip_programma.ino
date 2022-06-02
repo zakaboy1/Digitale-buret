@@ -178,7 +178,7 @@ void loop(){
       f = 64/Re;
       }
     else {
-      Lcd.clear();
+      lcd.clear();
       lcd.write("F error");
       delay(2000);
       lcd.clear();
