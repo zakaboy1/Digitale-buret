@@ -18,7 +18,6 @@
 #define DIR 8
 #define STEP 9
 DRV8825 stepper(MOTOR_STEPS, DIR, STEP, MODE0, MODE1, MODE2);
-stepper.setMicrostep(32); // microstepping op 1/32
 int steps = 0;
 
 //LCD Callibreren
@@ -97,6 +96,8 @@ void setup(){
   pinMode(dk4,INPUT);
 }
 void loop(){
+  //stepper
+  stepper.setMicrostep(32); // microstepping op 1/32
   //temperatuur
   VRT = analogRead(A0);         //analoge waarde
   VRT = (5.00/1023.00)*VRT;     //spanning in V
