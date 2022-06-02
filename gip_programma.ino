@@ -185,7 +185,7 @@ void loop(){
     }
     Pw = f * D * (L/d) * (exp(v)/2);
     Pt = P - Pw;
-    Vt = (Py*V)/(P);
+    Vt = (Pt*V)/(P);
     Vt/Q = n;
     Vt/v = t;
     C++;
