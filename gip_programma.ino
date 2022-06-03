@@ -187,8 +187,8 @@ void loop(){
     Pw = f * D * (L/d) * (exp(v)/2);
     Pt = P - Pw;
     Vt = (Pt*V)/(P);
-    Vt/Q = n;
-    Vt/v = t;
+    n = Vt/Q;
+    t = Vt/v;
     C++;
  }
   if (ss4 = HIGH && C == 2 && Vt != 0 && V != 0) {
