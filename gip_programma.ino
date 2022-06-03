@@ -115,7 +115,7 @@ void loop(){
 
   if (ss1 == LOW && ss2 == LOW && C == 0) {
     lcd.clear();
-    lcd.write("kies een vloeistof");
+    lcd.print("kies een vloeistof");
     lcd.setCursor(0,1);
     lcd.print("1 = water 2 = olie");
 }
@@ -138,7 +138,7 @@ void loop(){
    lcd.clear();
  }
   if (ss4 = HIGH && C == 0) {
-    c++;
+    C++;
  }
    //hoeveelheid vloeistof kiezen
   if (ss3 = HIGH && C == 1) {
