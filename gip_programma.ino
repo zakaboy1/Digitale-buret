@@ -88,7 +88,7 @@ void setup(){
   lcd.backlight();            //zet het achtergrondlicht aan
   lcd.clear();                //wist het scherm
   lcd.setCursor(0, 0);        //zet de cursor op positie 1, regel 1
-  
+  lcd.print("werkt");
   //drukknoppen
   pinMode(dk1,INPUT);
   pinMode(dk2,INPUT);
@@ -107,12 +107,6 @@ void loop(){
   T = (1/((ln/TCR) + (1/T0)));
   T = T - 273.15;               //T ==> °C
 
-  //timer
-  lcd.print(t);     //t = tijd
-  t = t-1;          // waarde van t daalt met 1 
-  delay(950);       //delay van 0.95 seconden
-  lcd.clear();      //lcd word leeggemaakt
-
   //keuze tussen water en olie
   ss1 = digitalRead(dk1);
   ss2 = digitalRead(dk2);
@@ -123,52 +117,53 @@ void loop(){
     lcd.clear();
     lcd.write("kies een vloeistof");
     lcd.setCursor(0,1);
-    lcd.write("1 = water 2 = olie");
+    lcd.print("1 = water 2 = olie");
 }
   if (ss1 == HIGH && C == 0) {
-    C++;
     Vis = Vis1;
     D = D1;
     lcd.clear();
     lcd.setCursor(0,0);
-    lcd.write("U koos water");
+    lcd.print("U koos water");
     delay(2000);
     lcd.clear();
  }
   if (ss2 == HIGH && C == 0) {
-   C++;
    Vis = Vis2;
    D = D2;
    lcd.clear();
    lcd.setCursor(0,0);
-   lcd.write("U koos olie");
+   lcd.print("U koos olie");
    delay(2000);
    lcd.clear();
+ }
+  if (ss4 = HIGH && C == 0) {
+    c++;
  }
    //hoeveelheid vloeistof kiezen
   if (ss3 = HIGH && C == 1) {
    switch (C2) {
      case 0:
        V = V + 0.001;
-       lcd.write(V);
+       lcd.print(V);
        C2++;
        break;
      case 1:
        lcd.clear();
        V = V + 0.01;
-       lcd.write(V);
+       lcd.print(V);
        C2++;
        break;
      case 2:
        lcd.clear();
        V = V + 0.1;
-       lcd.write(V);
+       lcd.print(V);
        C2++;
        break;
      case 3:
        lcd.clear();
        V = V + 1;
-       lcd.write(V);
+       lcd.print(V);
        C2 = 0;
        break;
  }}
@@ -180,7 +175,7 @@ void loop(){
       }
     else {
       lcd.clear();
-      lcd.write("F error");
+      lcd.print("F error");
       delay(2000);
       lcd.clear();
     }
@@ -203,7 +198,7 @@ void loop(){
     if (t == 0 && C == 2) {
       delay(1000);
       lcd.clear();
-      lcd.write("Einde");
+      lcd.print("Einde");
       delay(2000);
       V = 0;
       Vt = 0;
