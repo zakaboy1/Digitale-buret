@@ -114,9 +114,9 @@ void loop(){
 
   if (ss1 == LOW && ss2 == LOW && C == 0) {
     lcd.clear();
-    lcd.print("kies een vloeistof");
+    lcd.print("keuze vloeistof");
     lcd.setCursor(0,1);
-    lcd.print("1 = water 2 = olie");
+    lcd.print("W = H2O R = olie");
 }
   if (ss1 == HIGH && C == 0) {
     Vis = Vis1;
