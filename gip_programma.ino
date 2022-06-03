@@ -126,6 +126,7 @@ void loop(){
     lcd.print("U koos water");
     delay(2000);
     lcd.clear();
+    lcd.print("G = ok R = olie");
  }
   if (ss2 == HIGH && C == 0) {
    Vis = Vis2;
@@ -135,14 +136,22 @@ void loop(){
    lcd.print("U koos olie");
    delay(2000);
    lcd.clear();
+   lcd.print("G = ok W = H2O");
  }
   if (ss4 = HIGH && C == 0) {
+    lcd.clear();
     C++;
+    lcd.print("kies volume");
+    lcd.setCursor(0,1);
+    lcd.print("W=+ R=- B=eenheid");
  }
    //hoeveelheid vloeistof kiezen
   if (ss3 = HIGH && C == 1) {
-   switch (C2) {
+    lcd.clear();
+    lcd.setCursor(0,0);
+    switch (C2) {
      case 0:
+       lcd.clear();
        V = V + 0.001;
        lcd.print(V);
        C2++;
