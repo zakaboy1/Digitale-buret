@@ -11,12 +11,12 @@
 #include <Math.h>
 
 // stappenmotor
-#define MODE0 10
-#define MODE1 11 
-#define MODE2 12
+#define MODE0 6
+#define MODE1 8 
+#define MODE2 9
 #define MOTOR_STEPS 200
-#define DIR 8
-#define STEP 9
+#define DIR 2
+#define STEP 4
 DRV8825 stepper(MOTOR_STEPS, DIR, STEP, MODE0, MODE1, MODE2);
 int steps = 0;
 
