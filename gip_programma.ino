@@ -3,7 +3,6 @@
 #include <DRV8825.h>
 #include <MultiDriver.h>
 #include <SyncDriver.h>
-#include <SevSeg.h>
 #include <Wire.h>
 #include <LiquidCrystal_I2C.h>
 #include "DRV8825.h"
