@@ -24,16 +24,16 @@ LiquidCrystal_I2C lcd(0x27, 16, 2);
 
 //drukknoppen
   //dk1
-int dk1 = 2;
+int dk1 = 10;
 int ss1 = LOW;       //schakelstand dk1
   //dk2
-int dk2 = 4;
+int dk2 = 11;
 int ss2 = LOW;       //schakelstand dk2
   //dk3
-int dk3 = 6;
+int dk3 = 12;
 int ss3 = LOW;       //schakelstand dk3
   //dk4
-int dk4 = 8;
+int dk4 = 13;
 int ss4 = LOW;       //schakelstand dk4
 //NTC
   //zie datasheet
@@ -86,8 +86,7 @@ void setup(){
   lcd.init();                 //initialitatie van het LCD
   lcd.backlight();            //zet het achtergrondlicht aan
   lcd.clear();                //wist het scherm
-  lcd.setCursor(0, 0);        //zet de cursor op positie 1, regel 1
-  lcd.print("werkt");
+
   //drukknoppen
   pinMode(dk1,INPUT);
   pinMode(dk2,INPUT);
@@ -105,20 +104,21 @@ void loop(){
   ln = log(RT/R0);
   T = (1/((ln/TCR) + (1/T0)));
   T = T - 273.15;               //T ==> °C
-
+ 
   //keuze tussen water en olie
   ss1 = digitalRead(dk1);
   ss2 = digitalRead(dk2);
   ss3 = digitalRead(dk3);
   ss4 = digitalRead(dk4);
 
-  if (ss1 == LOW && ss2 == LOW && C == 0) {
+   if (ss1 == HIGH && ss2 == HIGH && C == 0) {
     lcd.clear();
     lcd.print("keuze vloeistof");
     lcd.setCursor(0,1);
     lcd.print("W = H2O R = olie");
+    delay(2000);
 }
-  if (ss1 == HIGH && C == 0) {
+   if (ss1 == LOW && C == 0) {
     Vis = Vis1;
     D = D1;
     lcd.clear();
@@ -126,9 +126,10 @@ void loop(){
     lcd.print("U koos water");
     delay(2000);
     lcd.clear();
-    lcd.print("G = ok R = olie");
+    lcd.print("G = ok R = olie"); 
+    C++;
  }
-  if (ss2 == HIGH && C == 0) {
+  if (ss2 == LOW && C == 0) {
    Vis = Vis2;
    D = D2;
    lcd.clear();
@@ -137,45 +138,84 @@ void loop(){
    delay(2000);
    lcd.clear();
    lcd.print("G = ok W = H2O");
+   C++;
  }
-  if (ss4 = HIGH && C == 0) {
+  if (ss4 = HIGH && C == 1) {
     lcd.clear();
-    C++;
     lcd.print("kies volume");
     lcd.setCursor(0,1);
     lcd.print("W=+ R=- B=eenheid");
+    delay(2000);
+    C++;
  }
    //hoeveelheid vloeistof kiezen
-  if (ss3 = HIGH && C == 1) {
+  if (ss3 = HIGH && C == 2) {
     lcd.clear();
     lcd.setCursor(0,0);
+    C2++;
     switch (C2) {
-     case 0:
-       lcd.clear();
-       V = V + 0.001;
-       lcd.print(V);
-       C2++;
-       break;
      case 1:
-       lcd.clear();
-       V = V + 0.01;
-       lcd.print(V);
-       C2++;
+       if (ss1 = HIGH) {
+         V = V + 0.001;
+         lcd.clear();
+         lcd.print(V);
+         delay(1000);
+         }
+        if (ss2 = HIGH) {
+         V = V - 0.001;
+         lcd.clear();
+         lcd.print(V);
+         delay(1000);
+         }
        break;
      case 2:
-       lcd.clear();
-       V = V + 0.1;
-       lcd.print(V);
-       C2++;
+       if (ss1 = HIGH) {
+         V = V + 0.001;
+         lcd.clear();
+         lcd.print(V);
+         delay(1000);
+         }
+        if (ss2 = HIGH) {
+         V = V - 0.001;
+         lcd.clear();
+         lcd.print(V);
+         delay(1000);
+         }
        break;
      case 3:
-       lcd.clear();
-       V = V + 1;
-       lcd.print(V);
-       C2 = 0;
+       if (ss1 = HIGH) {
+         V = V + 0.001;
+         lcd.clear();
+         lcd.print(V);
+         delay(1000);
+         }
+        if (ss2 = HIGH) {
+         V = V - 0.001;
+         lcd.clear();
+         lcd.print(V);
+         delay(1000);
+         }
        break;
- }}
-  if (ss4 = HIGH && C == 1){
+     case 4:
+       if (ss1 = HIGH) {
+         V = V + 0.001;
+         lcd.clear();
+         lcd.print(V);
+         delay(1000);
+         }
+        if (ss2 = HIGH) {
+         V = V - 0.001;
+         lcd.clear();
+         lcd.print(V);
+         delay(1000);
+         }
+       break;
+    if (C2 == 5) {
+      C2 = 1;
+    }
+   }
+  }
+  if (ss4 = HIGH && C == 2){
     //berekening
     Re = (v * L * D)/Vis;
     if (Re < 2000){
@@ -193,8 +233,13 @@ void loop(){
     n = Vt/Q;
     t = Vt/v;
     C++;
+    if (Vt != 0 || V != 0) {
+      lcd.clear();
+      lcd.print("volume te laag");
+      delay(2000);
+  }
  }
-  if (ss4 = HIGH && C == 2 && Vt != 0 && V != 0) {
+  if (ss4 = HIGH && C == 3 && Vt != 0 && V != 0) {
     //motor draait 'steps' aantal stappen
     int(steps) = n * 6400;
     stepper.move(steps);
